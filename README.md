@@ -4,7 +4,9 @@ Elemental Carousel block for SilverStripe.
 
 ## Install
 
-`composer require Antlion/element-Carousel`
+```bash
+composer require antlion/element-carousel
+```
 
 ## Requirements
 
