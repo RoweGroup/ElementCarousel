@@ -1,11 +1,10 @@
-<% if $Title && $ShowTitle %>
-    <% with $HeadingTag %>
-        <div class="cell">
-          <{$Me} class="element-title">$Up.Title.XML</{$Me}>
-        </div>
-    <% end_with %>
-<% end_if %>
-<div class="cell element-carousel">
+
+<div class="element-carousel">
+  <% if $Title && $ShowTitle %>
+      <% with $HeadingTag %>
+        <{$Me} class="element-title">$Up.Title.XML</{$Me}>
+      <% end_with %>
+  <% end_if %>
   <div class="swiper" id="carousel-{$ID}" data-element-carousel>
     <div class="swiper-wrapper">
       <% loop $Slides %>
