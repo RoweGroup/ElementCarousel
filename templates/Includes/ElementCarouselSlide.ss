@@ -1,4 +1,4 @@
-<div class="element-carousel__slide swiper-slide">
+<div class="element-slide swiper-slide">
 <div <% if $title || $Content %>class="card"<% end_if %>>
   <% if $Image %>
     <% if $Top.Lazy %>
@@ -23,15 +23,15 @@
   <% end_if %>
   <% if $title || $Content %>
   <div class="card-section">
-    <% if $Title %><h3 class="card-title">$Title</h3><% end_if %>
+    <% if $Title %><% if not $HideTitle %><h3 class="card-title">$Title</h3><% end_if %><% end_if %>
     $Content
       <% if $Links.Exists %>
         <div class="button-group small <% if $Align == 'center' %>align-center<% else_if $Align == 'right' %>align-right<% else %>align-left<% end_if %>">
           <% loop $Links %>
-          <a class="button $CssClass" href="$URL" <% if $OpenInNew %>target="_blank" rel="noopener noreferrer"<% end_if %>>$Title.XML</a>
+          <a class="button small $CssClass" href="$URL" <% if $OpenInNew %>target="_blank" rel="noopener noreferrer"<% end_if %>>$Title.XML</a>
           <% end_loop %>
         </div>
-      <% end_if %>    
+      <% end_if %>
   </div>
 <% end_if %>
 </div>

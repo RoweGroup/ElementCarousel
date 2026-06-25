@@ -6,6 +6,7 @@ use Antlion\ElementCarousel\Controllers\ElementCarouselController;
 use Antlion\ElementCarousel\Models\CarouselSlide;
 use DNADesign\Elemental\Models\BaseElement;
 use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\ToggleCompositeField;
 use SilverStripe\Forms\GridField\GridField;
@@ -27,6 +28,7 @@ class ElementCarousel extends BaseElement
 
   private static $db = [
     // 'Height'          => 'Enum("auto,short,medium,tall,full","tall")',
+    'SlideAppearance' => 'Enum("Slide,Cover","Slide")',
     'Loop'            => 'Boolean',
     'Speed'           => 'Int',
     'SpaceBetween'    => 'Int',
@@ -103,13 +105,21 @@ class ElementCarousel extends BaseElement
             'AutoplayDelay',
             'Lazy',
             'Slides',
-            
+            'SlideAppearance',
         ]);
     $fields->addFieldsToTab('Root.Main', [
       ToggleCompositeField::create(
                 'SliderSettings',
                 'Slider Settings',
                 [
+                    DropdownField::create(
+                        'SlideAppearance',
+                        'Slide appearance',
+                        [
+                            'Slide' => 'Slide',
+                            'Cover' => 'Cover slide',
+                        ]
+                    ),
                     FieldGroup::create(
                         'Slides Per View', 
                         NumericField::create('SlidesPerView',   'Slides per view (desktop)'),

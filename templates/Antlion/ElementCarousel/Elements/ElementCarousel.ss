@@ -6,10 +6,15 @@
     <% end_with %>
 <% end_if %>
 <%-- <div class="cell element-carousel"> --%>
-  <div class="swiper" id="carousel-{$ID}" data-element-carousel>
+  <div class="swiper <% if $ExtraClass %> $ExtraClass<% end_if %>" id="carousel-{$ID}" data-element-carousel>
     <div class="swiper-wrapper">
       <% loop $Slides %>
-        <% include ElementCarouselSlide %>
+        <% if $Up.SlideAppearance == 'Cover' %>
+          <% include ElementCarouselCoverSlide %>
+        <% else %>
+          <% include ElementCarouselSlide %>
+        <% end_if %>
+
       <% end_loop %>
     </div>
 

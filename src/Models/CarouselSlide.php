@@ -8,6 +8,8 @@ use SilverStripe\Assets\Image;
 use SilverStripe\LinkField\Models\Link;
 use SilverStripe\LinkField\Form\MultiLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\FieldGroup;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 
@@ -21,8 +23,9 @@ class CarouselSlide extends DataObject
   private static $icon = 'font-icon-block-layout';
 
   private static $db = [
-    'Title' => 'Varchar(255)',
-    'Content'        => 'HTMLText',
+    'Title'     => 'Varchar(255)',
+    'HideTitle' => 'Boolean',
+    'Content'   => 'HTMLText',
     // 'StartDate'       => 'Date',
     // 'EndDate'         => 'Date',
     'SortOrder'      => 'Int',
@@ -54,14 +57,18 @@ class CarouselSlide extends DataObject
     
     $fields = parent::getCMSFields();
     $fields->removeByName([
-      'CarouselID', 
+      'CarouselID',
       'SortOrder',
       'LinkID',
-      'Link'
-      
+      'Link',
+      'HideTitle',
     ]);
     $fields->addFieldsToTab('Root.Main', [
-      TextField::create('Title', 'Title')->setMaxLength(255),
+      FieldGroup::create(
+                'Title',
+                TextField::create('Title', 'Title')->setMaxLength(255),
+                CheckboxField::create('HideTitle', 'Hide title'),
+            ),
       HTMLEditorField::create('Content', 'Content')->setRows(8),
       UploadField::create('Image', 'Slide image')
                 ->setAllowedFileCategories('image/supported')
