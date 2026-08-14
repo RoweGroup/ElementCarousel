@@ -1,5 +1,5 @@
 
-<div class="element-cover-slide swiper-slide" style="background-image: url('$Image.URL');">
+<div class="element-cover-slide swiper-slide" style="background-image: url('$Image.WebP.URL');">
     <div class="card-section dark-overlay p-40 $CssClass">
           <% if not $HideTitle %><h3 class="card-title">$Title</h3><% end_if %>
           $Content

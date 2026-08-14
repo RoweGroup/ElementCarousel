@@ -225,4 +225,22 @@ class ElementCarousel extends BaseElement
     {
         return json_encode($this->getCarouselOptions(), JSON_UNESCAPED_SLASHES);
     }
+
+    /**
+     * Cache key for the front-end render: changes whenever this element's own
+     * settings change, or the slide list is added to, removed from, reordered,
+     * or one of its members is edited.
+     */
+    public function getSlidesCacheKey(): string
+    {
+        $slides = $this->Slides()->sort('SortOrder');
+
+        return md5(implode('|', [
+            $this->ID,
+            $this->LastEdited,
+            $slides->count(),
+            implode('-', $slides->column('ID')),
+            $slides->max('LastEdited'),
+        ]));
+    }
 }

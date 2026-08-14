@@ -1,3 +1,4 @@
+<% cached $SlidesCacheKey %>
 <% if $Title && $ShowTitle %>
     <% with $HeadingTag %>
         <%-- <div class="cell"> --%>
@@ -37,3 +38,4 @@ document.addEventListener('DOMContentLoaded', function(){
   new Swiper(el, options);
 });
 </script>
+<% end_cached %>
