@@ -3,20 +3,20 @@
   <% if $Image %>
     <% if $Top.Lazy %>
       <picture>
-        <source media="(min-width:1024px)" data-srcset="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,600).URL<% else %>$Image.Fill(600,600).URL<% end_if %>">
-        <source media="(max-width:1023px)" data-srcset="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,600).URL<% else %>$Image.Fill(600,600).URL<% end_if %>">
+        <source media="(min-width:1024px)" data-srcset="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,400).URL<% else %>$Image.Fill(600,400).URL<% end_if %>">
+        <source media="(max-width:1023px)" data-srcset="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,400).URL<% else %>$Image.Fill(600,400).URL<% end_if %>">
         <img class="swiper-lazy"
-             data-src="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,600).URL<% else %>$Image.ScaleMaxWidth(600).URL<% end_if %>"
-             alt="$Image.Title.ATT" width="600" height="600"
+             data-src="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,400).URL<% else %>$Image.ScaleMaxWidth(600).URL<% end_if %>"
+             alt="$Image.Title.ATT" width="600" height="400"
              style="width:100%;height:auto;">
       </picture>
       <div class="swiper-lazy-preloader"></div>
     <% else %>
       <picture>
-        <source media="(min-width:1024px)" srcset="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,600).URL<% else %>$Image.Fill(600,600).URL<% end_if %>">
-        <source media="(max-width:1023px)" srcset="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,600).URL<% else %>$Image.Fill(600,600).URL<% end_if %>">
-        <img src="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,600).URL<% else %>$Image.ScaleMaxWidth(600).URL<% end_if %>"
-             alt="$Image.Title.ATT" width="600" height="600"
+        <source media="(min-width:1024px)" srcset="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,400).URL<% else %>$Image.Fill(600,400).URL<% end_if %>">
+        <source media="(max-width:1023px)" srcset="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,400).URL<% else %>$Image.Fill(600,400).URL<% end_if %>">
+        <img src="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,400).URL<% else %>$Image.ScaleMaxWidth(600).URL<% end_if %>"
+             alt="$Image.Title.ATT" width="600" height="400"
              style="width:100%;height:auto;">
       </picture>
     <% end_if %>
