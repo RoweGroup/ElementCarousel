@@ -1,3 +1,4 @@
+<% require css('antlion/element-carousel:client/css/carouselcard.css') %>
 <% cached $SlidesCacheKey %>
 <% if $Title && $ShowTitle %>
     <% with $HeadingTag %>
@@ -11,9 +12,9 @@
     <div class="swiper-wrapper">
       <% loop $Slides %>
         <% if $Up.SlideAppearance == 'Cover' %>
-          <% include ElementCarouselCoverSlide %>
+          <% include ElementCarouselCoverSlide CardAlignClass=$Up.CardHorizontalAlignClass, CardHAlign=$Up.CardHorizontalAlign, CoverVAlignClass=$Up.CoverVerticalAlignClass, CoverPaddingClass=$Up.CoverPaddingClass, CardRatio=$Up.CoverAspectRatioCss %>
         <% else %>
-          <% include ElementCarouselSlide %>
+          <% include ElementCarouselSlide CardAlignClass=$Up.CardHorizontalAlignClass, CardHAlign=$Up.CardHorizontalAlign, CardRatio=$Up.CoverAspectRatioCss %>
         <% end_if %>
 
       <% end_loop %>

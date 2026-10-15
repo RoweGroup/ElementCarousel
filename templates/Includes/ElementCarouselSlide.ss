@@ -8,7 +8,7 @@
         <img class="swiper-lazy"
              data-src="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,400).URL<% else %>$Image.ScaleMaxWidth(600).URL<% end_if %>"
              alt="$Image.Title.ATT" width="600" height="400"
-             style="width:100%;height:auto;">
+             style="width:100%;height:auto;<% if $CardRatio %>aspect-ratio:$CardRatio;object-fit:cover;<% end_if %>">
       </picture>
       <div class="swiper-lazy-preloader"></div>
     <% else %>
@@ -17,16 +17,16 @@
         <source media="(max-width:1023px)" srcset="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,400).URL<% else %>$Image.Fill(600,400).URL<% end_if %>">
         <img src="<% if function_exists('FocusFillMax') %>$Image.FocusFillMax(600,400).URL<% else %>$Image.ScaleMaxWidth(600).URL<% end_if %>"
              alt="$Image.Title.ATT" width="600" height="400"
-             style="width:100%;height:auto;">
+             style="width:100%;height:auto;<% if $CardRatio %>aspect-ratio:$CardRatio;object-fit:cover;<% end_if %>">
       </picture>
     <% end_if %>
   <% end_if %>
   <% if $title || $Content %>
-  <div class="card-section">
+  <div class="card-section<% if $CardAlignClass %> $CardAlignClass<% end_if %>">
     <% if $Title %><% if not $HideTitle %><h3 class="card-title">$Title</h3><% end_if %><% end_if %>
     $Content
       <% if $Links.Exists %>
-        <div class="button-group small <% if $Align == 'center' %>align-center<% else_if $Align == 'right' %>align-right<% else %>align-left<% end_if %>">
+        <div class="button-group small <% if $CardHAlign == 'center' || $Align == 'center' %>align-center<% else_if $CardHAlign == 'right' || $Align == 'right' %>align-right<% else %>align-left<% end_if %>">
           <% loop $Links %>
           <a class="button small $CssClass" href="$URL" <% if $RemodalTarget %>data-remodal-target="$RemodalTarget"<% end_if %> <% if $OpenInNew %>target="_blank" rel="noopener noreferrer"<% end_if %>>$Title.XML</a>
           <% end_loop %>

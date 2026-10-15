@@ -29,6 +29,13 @@ class ElementCarousel extends BaseElement
   private static $db = [
     // 'Height'          => 'Enum("auto,short,medium,tall,full","tall")',
     'SlideAppearance' => 'Enum("Slide,Cover","Slide")',
+
+    // Card settings
+    'CardHorizontalAlign' => 'Enum("left,center,right","left")',
+    'CoverFormat'         => 'Enum("9/8,4/3,16/9,3/4","3/4")',
+    'CoverPadding'        => 'Enum("none,20px,40px,60px","60px")',
+    'CoverVerticalAlign'  => 'Enum("top,middle,bottom","bottom")',
+
     'Loop'            => 'Boolean',
     'Speed'           => 'Int',
     'SpaceBetween'    => 'Int',
@@ -106,11 +113,16 @@ class ElementCarousel extends BaseElement
             'Lazy',
             'Slides',
             'SlideAppearance',
+            'CardHorizontalAlign',
+            'CoverFormat',
+            'CoverPadding',
+            'CoverVerticalAlign',
         ]);
     $fields->addFieldsToTab('Root.Main', [
+      // Padding and vertical alignment show only when Slide appearance is Cover
       ToggleCompositeField::create(
-                'SliderSettings',
-                'Slider Settings',
+                'CardSettings',
+                'Card Settings',
                 [
                     DropdownField::create(
                         'SlideAppearance',
@@ -120,6 +132,34 @@ class ElementCarousel extends BaseElement
                             'Cover' => 'Cover slide',
                         ]
                     ),
+                    DropdownField::create('CoverFormat', 'Format', [
+                        '9/8'  => '9:8 (block)',
+                        '4/3'  => '4:3 (landscape)',
+                        '16/9' => '16:9 (widescreen)',
+                        '3/4'  => '3:4 (portrait)',
+                    ])->setDescription('Image aspect ratio for both Slide and Cover slides.'),
+                    DropdownField::create('CardHorizontalAlign', 'Horizontal alignment', [
+                        'left'   => 'Left',
+                        'center' => 'Center',
+                        'right'  => 'Right',
+                    ]),
+                    DropdownField::create('CoverVerticalAlign', 'Vertical alignment', [
+                        'top'    => 'Top',
+                        'middle' => 'Middle',
+                        'bottom' => 'Bottom',
+                    ])->displayIf('SlideAppearance')->isEqualTo('Cover')->end(),
+                    DropdownField::create('CoverPadding', 'Content padding', [
+                        'none' => 'None',
+                        '20px' => 'Small (20px)',
+                        '40px' => 'Medium (40px)',
+                        '60px' => 'Large (60px)',
+                    ])->displayIf('SlideAppearance')->isEqualTo('Cover')->end(),
+                ]
+            )->setStartClosed(true),
+      ToggleCompositeField::create(
+                'SliderSettings',
+                'Slider Settings',
+                [
                     FieldGroup::create(
                         'Slides Per View', 
                         NumericField::create('SlidesPerView',   'Slides per view (desktop)'),
@@ -151,6 +191,45 @@ class ElementCarousel extends BaseElement
   {
     return _t(__class__ . '.BlockType', 'Carousel');
   }
+
+    public function CardHorizontalAlignClass(): string
+    {
+        return match ($this->CardHorizontalAlign) {
+            'center' => 'align-center text-center',
+            'right'  => 'align-right text-right',
+            'left'   => 'align-left text-left',
+            default  => '',
+        };
+    }
+
+    public function CoverVerticalAlignClass(): string
+    {
+        return match ($this->CoverVerticalAlign) {
+            'top'    => 'align-top',
+            'middle' => 'align-middle',
+            default  => 'align-bottom',
+        };
+    }
+
+    public function CoverPaddingClass(): string
+    {
+        return match ($this->CoverPadding) {
+            'none'  => '',
+            '20px'  => 'p-20',
+            '40px'  => 'p-40',
+            default => 'p-60',
+        };
+    }
+
+    /**
+     * Value for the CSS aspect-ratio property on slide images.
+     */
+    public function CoverAspectRatioCss(): string
+    {
+        return in_array($this->CoverFormat, ['9/8', '4/3', '16/9', '3/4'], true)
+            ? $this->CoverFormat
+            : '3/4';
+    }
 
 //   public function getSimpleClassName()
 //   {
