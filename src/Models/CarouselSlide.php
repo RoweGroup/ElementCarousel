@@ -4,6 +4,7 @@ namespace Antlion\ElementCarousel\Models;
 
 use Antlion\ElementCarousel\Elements\ElementCarousel;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Permission;
 use SilverStripe\Assets\Image;
 use SilverStripe\LinkField\Models\Link;
 use SilverStripe\LinkField\Form\MultiLinkField;
@@ -87,4 +88,32 @@ class CarouselSlide extends DataObject
     return $fields;
   }
 
+  public function canView($member = null)
+  {
+    return $this->extendedCan(__FUNCTION__, $member) ?? $this->parentCan(__FUNCTION__, $member);
+  }
+
+  public function canEdit($member = null)
+  {
+    return $this->extendedCan(__FUNCTION__, $member) ?? $this->parentCan(__FUNCTION__, $member);
+  }
+
+  public function canDelete($member = null)
+  {
+    return $this->extendedCan(__FUNCTION__, $member) ?? $this->parentCan(__FUNCTION__, $member);
+  }
+
+  public function canCreate($member = null, $context = [])
+  {
+    return $this->extendedCan(__FUNCTION__, $member, $context) ?? Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+  }
+
+  /**
+   * Slides follow the permissions of their carousel block (and so its page).
+   */
+  private function parentCan(string $method, $member): bool
+  {
+    $parent = $this->Carousel();
+    return $parent->exists() ? $parent->$method($member) : Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+  }
 }
