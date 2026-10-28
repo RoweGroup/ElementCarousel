@@ -12,6 +12,7 @@ use SilverStripe\Forms\ToggleCompositeField;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use TractorCow\Colorpicker\Forms\ColorField;
 use SilverStripe\Forms\FieldGroup;
 
 class ElementCarousel extends BaseElement
@@ -35,6 +36,15 @@ class ElementCarousel extends BaseElement
     'CoverFormat'         => 'Enum("9/8,4/3,16/9,3/4","3/4")',
     'CoverPadding'        => 'Enum("none,20px,40px,60px","60px")',
     'CoverVerticalAlign'  => 'Enum("top,middle,bottom","bottom")',
+
+    // Appearance
+    'Theme'           => 'Enum("inherit,light,dark","inherit")',
+    'BackgroundColor' => 'Varchar(20)',
+
+    // Cover slide gradient overlay (column defaults keep the original black 90% gradient)
+    'CoverGradient'   => 'Boolean(1)',
+    'OverlayColor'    => 'Varchar(20)',
+    'OverlayOpacity'  => 'Int(90)',
 
     'Loop'            => 'Boolean',
     'Speed'           => 'Int',
@@ -65,6 +75,9 @@ class ElementCarousel extends BaseElement
         $this->owner->Loop          = true;
         $this->owner->Autoplay      = true;
         $this->owner->AutoplayDelay = 5000;
+        $this->Theme                = 'inherit';
+        $this->CoverGradient        = true;
+        $this->OverlayOpacity       = 90;
         parent::populateDefaults();
     }
 
@@ -117,6 +130,9 @@ class ElementCarousel extends BaseElement
             'CoverFormat',
             'CoverPadding',
             'CoverVerticalAlign',
+            'BackgroundColor',
+            'CoverGradient',
+            'OverlayColor',
         ]);
     $fields->addFieldsToTab('Root.Main', [
       // Padding and vertical alignment show only when Slide appearance is Cover
@@ -154,6 +170,21 @@ class ElementCarousel extends BaseElement
                         '40px' => 'Medium (40px)',
                         '60px' => 'Large (60px)',
                     ])->displayIf('SlideAppearance')->isEqualTo('Cover')->end(),
+                    ColorField::create('BackgroundColor', 'Background Color')
+                        ->setDescription('Card background. Shows on Cover slides that have no image.'),
+                    DropdownField::create('Theme', 'Text Theme', [
+                        'inherit' => 'Default',
+                        'light'   => 'Light (dark text)',
+                        'dark'    => 'Dark (white text)',
+                    ])->setDescription('Sets the card text color'),
+                    CheckboxField::create('CoverGradient', 'Gradient overlay')
+                        ->displayIf('SlideAppearance')->isEqualTo('Cover')->end(),
+                    ColorField::create('OverlayColor', 'Gradient Color')
+                        ->setDescription('Defaults to black')
+                        ->displayIf('SlideAppearance')->isEqualTo('Cover')->end(),
+                    NumericField::create('OverlayOpacity', 'Gradient Opacity (0–100)')
+                        ->setDescription('Opacity at the bottom of the card; the top fades to a light tint.')
+                        ->displayIf('SlideAppearance')->isEqualTo('Cover')->end(),
                 ]
             )->setStartClosed(true),
       ToggleCompositeField::create(
@@ -219,6 +250,78 @@ class ElementCarousel extends BaseElement
             '40px'  => 'p-40',
             default => 'p-60',
         };
+    }
+
+    public function ThemeClass(): string
+    {
+        $classes = match ($this->Theme) {
+            'light' => 'carousel-light',
+            'dark'  => 'carousel-dark',
+            default => '',
+        };
+
+        if ($this->CardBackgroundRGB()) {
+            $classes .= ' carousel-card-bg';
+        }
+
+        if (!$this->CoverGradient) {
+            $classes .= ' carousel-no-gradient';
+        }
+
+        return trim($classes);
+    }
+
+    // Inline style string for the outer carousel wrapper; cards read these custom properties
+    public function CarouselStyle(): string
+    {
+        $parts = [];
+
+        if ($rgb = $this->CardBackgroundRGB()) {
+            $parts[] = '--card-bg-rgb: ' . $rgb;
+        }
+
+        if ($this->CoverGradient) {
+            $overlay = $this->hexToRgb((string) $this->OverlayColor);
+            if ($overlay) {
+                $parts[] = '--overlay-rgb: ' . implode(', ', $overlay);
+            }
+            $parts[] = '--overlay-opacity: ' . $this->OverlayOpacityCss();
+        }
+
+        return $parts ? implode('; ', $parts) . ';' : '';
+    }
+
+    // 0–100 int -> 0–1 float string
+    public function OverlayOpacityCss(): string
+    {
+        $pct = max(0, min(100, (int) $this->OverlayOpacity));
+        return (string) round($pct / 100, 2);
+    }
+
+    // "r, g, b" so the CSS can use it for both solid and translucent backgrounds
+    public function CardBackgroundRGB(): ?string
+    {
+        $rgb = $this->hexToRgb((string) $this->BackgroundColor);
+        return $rgb ? implode(', ', $rgb) : null;
+    }
+
+    private function hexToRgb(string $hex): ?array
+    {
+        $hex = ltrim(trim($hex), '#');
+
+        if (strlen($hex) === 3) {
+            $hex = "{$hex[0]}{$hex[0]}{$hex[1]}{$hex[1]}{$hex[2]}{$hex[2]}";
+        }
+
+        if (!preg_match('/^[0-9a-fA-F]{6}$/', $hex)) {
+            return null;
+        }
+
+        return [
+            hexdec(substr($hex, 0, 2)),
+            hexdec(substr($hex, 2, 2)),
+            hexdec(substr($hex, 4, 2)),
+        ];
     }
 
     /**

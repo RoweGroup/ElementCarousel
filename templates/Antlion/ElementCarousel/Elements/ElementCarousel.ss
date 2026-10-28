@@ -1,5 +1,6 @@
 <% require css('antlion/element-carousel:client/css/carouselcard.css') %>
 <% cached $SlidesCacheKey %>
+<div class="element-carousel {$ThemeClass}"<% if $CarouselStyle %> style="{$CarouselStyle}"<% end_if %>>
 <% if $Title && $ShowTitle %>
     <% with $HeadingTag %>
         <%-- <div class="cell"> --%>
@@ -30,6 +31,8 @@
 <%-- </div> --%>
 <%-- <% require javascript('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js') %> --%>
 <%-- <% require javascript('elements/element-carousel:client/js/swiper-bundle.min.js') %> --%>
+
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
