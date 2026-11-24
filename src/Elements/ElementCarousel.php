@@ -60,6 +60,7 @@ class ElementCarousel extends BaseElement
     'MouseWheel'      => 'Boolean',
     'Autoplay'        => 'Boolean',
     'AutoplayDelay'   => 'Int',
+    'PauseButton'     => 'Boolean(1)',
     'Lazy'            => 'Boolean',
   ];
 
@@ -75,6 +76,7 @@ class ElementCarousel extends BaseElement
         $this->owner->Loop          = true;
         $this->owner->Autoplay      = true;
         $this->owner->AutoplayDelay = 5000;
+        $this->owner->PauseButton   = true;
         $this->Theme                = 'inherit';
         $this->CoverGradient        = true;
         $this->OverlayOpacity       = 90;
@@ -123,6 +125,7 @@ class ElementCarousel extends BaseElement
             'MouseWheel',
             'Autoplay',
             'AutoplayDelay',
+            'PauseButton',
             'Lazy',
             'Slides',
             'SlideAppearance',
@@ -210,6 +213,8 @@ class ElementCarousel extends BaseElement
                     CheckboxField::create('Autoplay', 'Autoplay'),
                     NumericField::create('AutoplayDelay', 'Autoplay delay (ms)')
                         ->setDescription('Used only when Autoplay is enabled.'),
+                    CheckboxField::create('PauseButton', 'Show pause button')
+                        ->setDescription('Lets visitors stop the autoplay (accessibility, WCAG 2.2.2).'),
                     NumericField::create('Speed', 'Transition speed (ms)'),
                 ]
             )->setStartClosed(false)
@@ -392,6 +397,19 @@ class ElementCarousel extends BaseElement
                 'pauseOnMouseEnter'   => true,
             ];
         }
+        if ($this->owner->Autoplay && $this->owner->PauseButton) {
+            $o['pauseButton'] = true; // theme JS adds a pause/play button
+        }
+
+        // keyboard + screen reader support (WCAG 2.1.1, 4.1.2): theme JS adds arrow-key control
+        // and holds autoplay while keyboard focus is inside; Swiper labels it as a carousel region
+        $o['keyboardControl'] = true;
+        $o['a11y'] = [
+            'containerRole'                   => 'region',
+            'containerRoleDescriptionMessage' => 'carousel',
+            'containerMessage'                => ($this->ShowTitle && trim((string) $this->Title) !== '' ? trim(strip_tags((string) $this->Title)) : 'Carousel'),
+            'itemRoleDescriptionMessage'      => 'slide',
+        ];
         if ($this->owner->Lazy) {
             $o['lazy'] = [
                 'loadPrevNext' => true,
@@ -405,7 +423,7 @@ class ElementCarousel extends BaseElement
      */
     public function getCarouselOptionsJSON(): string
     {
-        return json_encode($this->getCarouselOptions(), JSON_UNESCAPED_SLASHES);
+        return json_encode($this->getCarouselOptions(), JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP);
     }
 
     /**
